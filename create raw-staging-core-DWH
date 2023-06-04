@@ -1,0 +1,44 @@
+//pull all the data that is relevant for our DWH w/o transformation or cleaning 
+// to raw dwh environment
+create or replace table raw.raw_dwh
+as
+select     
+    quiz.module_name,
+    mods.topic,
+    quiz.submission_date,
+    quiz.email,
+    hr.employee_name,
+    hr.start_date,
+    hr.team, 
+    hr.program,
+    hr.country,
+    quiz.score
+from onboarding.quiz_scores as quiz 
+inner join onboarding.employee_info as hr
+    on quiz.email = hr.email
+inner join onboarding.modules as mods
+    on mods.module_name = quiz.module_name
+; 
+
+//clean and transform the data in the staging environment 
+CREATE OR REPLACE TABLE staging.staging_dwh
+AS
+SELECT
+  REGEXP_REPLACE(module_name, '"', '') AS module_name,
+  REGEXP_REPLACE(topic, '"', '') AS topic,
+  CAST(REGEXP_REPLACE(submission_date, '"', '') AS DATE) AS submission_date,
+  score,
+  REGEXP_REPLACE(email, '"', '') AS email,
+  REGEXP_REPLACE(team, '"', '') AS team,
+  REGEXP_REPLACE(program, '"', '') AS program,
+  REGEXP_REPLACE(country, '"', '') AS country,
+  REGEXP_REPLACE(employee_name, '"', '') AS employee_name,
+  CAST(REGEXP_REPLACE(start_date, '"', '') AS DATE) AS start_date
+FROM raw.raw_dwh;
+
+
+// send the cleaned/transformed data to our core dwh 
+CREATE OR REPLACE TABLE core_dwh.core_dwh
+AS
+SELECT *
+FROM staging.staging_dwh; 
