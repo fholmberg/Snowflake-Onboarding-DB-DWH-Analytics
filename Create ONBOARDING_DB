@@ -1,0 +1,32 @@
+//create table for employee_info
+create or replace TABLE ONBOARDING_DB.ONBOARDING.EMPLOYEE_INFO (
+	ID NUMBER(38,0) NOT NULL,
+	EMPLOYEE_NAME VARCHAR(50),
+	EMAIL VARCHAR(50),
+	START_DATE VARCHAR(20),
+	TEAM VARCHAR(20),
+	PROGRAM VARCHAR(20),
+	COUNTRY VARCHAR(20),
+	unique (EMAIL),
+	primary key (ID)
+);
+
+//create table for learning modules
+create or replace TABLE ONBOARDING_DB.ONBOARDING.MODULES (
+	ID NUMBER(38,0) NOT NULL,
+	MODULE_NAME VARCHAR(20),
+	TOPIC VARCHAR(20),
+	unique (MODULE_NAME),
+	primary key (ID)
+);
+
+//create table for storing quiz scores
+create or replace TABLE ONBOARDING_DB.ONBOARDING.QUIZ_SCORES (
+	ID NUMBER(38,0) NOT NULL,
+	MODULE_NAME VARCHAR(20),
+	SUBMISSION_DATE VARCHAR(20),
+	EMAIL VARCHAR(50),
+	SCORE FLOAT,
+	primary key (ID),
+	foreign key (MODULE_NAME) references ONBOARDING_DB.ONBOARDING.MODULES(MODULE_NAME)
+);
